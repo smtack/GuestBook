@@ -1,48 +1,20 @@
-<?php
-ini_set('display_errors', 'on');
+<?php require_once 'src/main.php'; ?>
 
-$host = '127.0.0.1';
-$database = 'guestbook';
-$user = '';
-$password = '';
-$charset = 'utf8mb4';
-
-mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-
-$connection = mysqli_connect($host, $user, $password, $database);
-
-mysqli_set_charset($connection, $charset);
-
-if($_SERVER['REQUEST_METHOD'] == "POST") {
-  if(empty($_POST['post_content']) || empty($_POST['post_by'])) {
-    $error = "Fill in both fields";
-  } else {
-    $post_content = mysqli_real_escape_string($connection, $_POST['post_content']);
-    $post_by = mysqli_real_escape_string($connection, $_POST['post_by']);
-
-    $sql = "INSERT INTO posts (post_content, post_by) VALUES (?,?)";
-
-    $stmt = mysqli_prepare($connection, $sql);
-
-    mysqli_stmt_bind_param($stmt, "ss", $post_content, $post_by);
-
-    mysqli_stmt_execute($stmt);
-  }
-}
-
-$sql = "SELECT * FROM posts ORDER BY post_date DESC";
-
-$result = mysqli_query($connection, $sql);
-
-$posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon" sizes="180x180" href="img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="img/favicon/site.webmanifest">
     <link href="css/style.css" rel="stylesheet">
+    
     <title>Guestbook</title>
 </head>
 <body>
@@ -69,12 +41,16 @@ $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
       </form>
     </div>
     <div class="posts">
-      <?php foreach($posts as $post): ?>
-        <div class="post">
-          <p><?=$post['post_content']?></p>
-          <span>By <?=$post['post_by']?> on <?=date('j F Y \a\t H:i', strtotime($post['post_date']))?></span>
-        </div>
-      <?php endforeach; ?>
+      <?php if(!$posts): ?>
+        <h3 id="notice">No Posts</h3>
+      <?php else: ?>
+        <?php foreach($posts as $post): ?>
+          <div class="post">
+            <p><?=$post['post_content']?></p>
+            <span>By <?=$post['post_by']?> on <?=date('j F Y \a\t H:i', strtotime($post['post_date']))?></span>
+          </div>
+        <?php endforeach; ?>
+      <?php endif; ?>
     </div>
   </div>
   <div class="footer">

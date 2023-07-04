@@ -1,7 +1,7 @@
 * {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  font-family: 'Roboto', sans-serif;
   box-sizing: border-box;
 }
 
@@ -91,6 +91,13 @@
   border-radius: 5px;
   float: right;
   margin: 50px 2.5%;
+}
+
+#notice {
+  text-align: center;
+  font-weight: lighter;
+  font-size: 20px;
+  padding: 25px;
 }
 
 .post {
